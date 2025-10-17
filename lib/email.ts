@@ -1,0 +1,665 @@
+import { Resend } from 'resend'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
+
+interface SendWelcomeEmailParams {
+  to: string
+  name: string
+  email: string
+  password: string
+  loginUrl: string
+}
+
+export async function sendWelcomeEmail({
+  to,
+  name,
+  email,
+  password,
+  loginUrl,
+}: SendWelcomeEmailParams) {
+  try {
+    const data = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'SOP Management <onboarding@resend.dev>',
+      to: [to],
+      subject: 'Welcome to SOP Management System',
+      html: getWelcomeEmailTemplate({ name, email, password, loginUrl }),
+    })
+
+    return { success: true, data }
+  } catch (error) {
+    console.error('Failed to send email:', error)
+    return { success: false, error }
+  }
+}
+
+interface SendVersionUpdateEmailParams {
+  to: string
+  name: string
+  sopTitle: string
+  oldVersion: string
+  newVersion: string
+  changelog: string
+}
+
+export async function sendVersionUpdateEmail({
+  to,
+  name,
+  sopTitle,
+  oldVersion,
+  newVersion,
+  changelog,
+}: SendVersionUpdateEmailParams) {
+  try {
+    const data = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'SOP Management <onboarding@resend.dev>',
+      to: [to],
+      subject: `SOP Update Required: ${sopTitle} (v${newVersion})`,
+      html: getVersionUpdateEmailTemplate({ name, sopTitle, oldVersion, newVersion, changelog }),
+    })
+
+    return { success: true, data }
+  } catch (error) {
+    console.error('Failed to send version update email:', error)
+    return { success: false, error }
+  }
+}
+
+interface SendCounterSignRequestEmailParams {
+  to: string
+  adminName: string
+  userName: string
+  userEmail: string
+  sopTitle: string
+  sopVersion: string
+  testScore: number
+  userSignature: string
+  signedAt: Date
+}
+
+export async function sendCounterSignRequestEmail({
+  to,
+  adminName,
+  userName,
+  userEmail,
+  sopTitle,
+  sopVersion,
+  testScore,
+  userSignature,
+  signedAt,
+}: SendCounterSignRequestEmailParams) {
+  try {
+    const data = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'SOP Management <onboarding@resend.dev>',
+      to: [to],
+      subject: `Counter-Signature Required: ${userName} completed ${sopTitle}`,
+      html: getCounterSignRequestEmailTemplate({ 
+        adminName, userName, userEmail, sopTitle, sopVersion, testScore, userSignature, signedAt 
+      }),
+    })
+
+    return { success: true, data }
+  } catch (error) {
+    console.error('Failed to send counter-sign request email:', error)
+    return { success: false, error }
+  }
+}
+
+function getWelcomeEmailTemplate({
+  name,
+  email,
+  password,
+  loginUrl,
+}: Omit<SendWelcomeEmailParams, 'to'>) {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to SOP Management</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 0;">
+        <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+          
+          <!-- Header with Red Background -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #FF1E25 0%, #E01B22 100%); padding: 40px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: bold;">
+                Welcome to SOP Management! 🎉
+              </h1>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px;">
+              <p style="margin: 0 0 20px; font-size: 16px; color: #374151; line-height: 1.6;">
+                Hi <strong>${name}</strong>,
+              </p>
+              
+              <p style="margin: 0 0 20px; font-size: 16px; color: #374151; line-height: 1.6;">
+                Your account has been created in our SOP Management System. You can now access your training materials and complete competency tests.
+              </p>
+              
+              <!-- Login Details Box -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f9fafb; border-radius: 12px; margin: 30px 0;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <h2 style="margin: 0 0 16px; font-size: 18px; color: #111827; font-weight: bold;">
+                      Your Login Details
+                    </h2>
+                    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #6b7280; font-weight: 600;">
+                          Email:
+                        </td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #111827; font-weight: 600;">
+                          ${email}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #6b7280; font-weight: 600;">
+                          Password:
+                        </td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #111827; font-weight: 600;">
+                          ${password}
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="margin: 16px 0 0; font-size: 12px; color: #6b7280; font-style: italic;">
+                      ⚠️ Please change your password after your first login
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- CTA Button -->
+              <table role="presentation" style="margin: 30px 0;">
+                <tr>
+                  <td align="center">
+                    <a href="${loginUrl}" style="display: inline-block; padding: 16px 40px; background-color: #FF1E25; color: #ffffff; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(255, 30, 37, 0.3);">
+                      Sign In to Portal
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              
+              <p style="margin: 30px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+                If you have any questions or need assistance, please contact your administrator.
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f9fafb; padding: 24px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+                © ${new Date().getFullYear()} SOP Management System. All rights reserved.
+              </p>
+            </td>
+          </tr>
+          
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `
+}
+
+function getVersionUpdateEmailTemplate({
+  name,
+  sopTitle,
+  oldVersion,
+  newVersion,
+  changelog,
+}: Omit<SendVersionUpdateEmailParams, 'to'>) {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOP Update Notification</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 0;">
+        <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+          
+          <!-- Header with Amber Background -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); padding: 40px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">
+                ⚠️ SOP Update Required
+              </h1>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px;">
+              <p style="margin: 0 0 20px; font-size: 16px; color: #374151; line-height: 1.6;">
+                Hi <strong>${name}</strong>,
+              </p>
+              
+              <p style="margin: 0 0 20px; font-size: 16px; color: #374151; line-height: 1.6;">
+                An SOP that you previously completed has been updated. You are required to review the new version and complete the competency test again.
+              </p>
+              
+              <!-- SOP Details Box -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #fef3c7; border: 2px solid #fbbf24; border-radius: 12px; margin: 30px 0;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <h2 style="margin: 0 0 16px; font-size: 20px; color: #92400e; font-weight: bold;">
+                      ${sopTitle}
+                    </h2>
+                    <table role="presentation" style="width: 100%; border-collapse: collapse; margin-top: 16px;">
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #92400e; font-weight: 600;">
+                          Version Update:
+                        </td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #78350f; font-weight: bold;">
+                          v${oldVersion} → v${newVersion}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="padding: 16px 0 8px; font-size: 14px; color: #92400e; font-weight: 600;">
+                          What Changed:
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="padding: 0 0 8px; font-size: 14px; color: #78350f; font-style: italic;">
+                          ${changelog}
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- Action Required Box -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #fef2f2; border: 2px solid #fca5a5; border-radius: 12px; margin: 30px 0;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <h3 style="margin: 0 0 12px; font-size: 16px; color: #991b1b; font-weight: bold;">
+                      📋 Action Required
+                    </h3>
+                    <ol style="margin: 0; padding-left: 20px; font-size: 14px; color: #7f1d1d; line-height: 1.8;">
+                      <li>Login to the SOP Management System</li>
+                      <li>Navigate to your "Pending SOPs" section</li>
+                      <li>Review the updated ${sopTitle}</li>
+                      <li>Complete the competency test for the new version</li>
+                    </ol>
+                  </td>
+                </tr>
+              </table>
+              
+              <p style="margin: 30px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+                <strong>Important:</strong> All staff members are required to complete the latest version of each SOP for compliance purposes. Please complete this update at your earliest convenience.
+              </p>
+              
+              <p style="margin: 20px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+                Please login to the SOP Management System to view your pending SOPs and complete the required training.
+              </p>
+              
+              <p style="margin: 30px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+                If you have any questions about these updates, please contact your administrator.
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f9fafb; padding: 24px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+                © ${new Date().getFullYear()} SOP Management System. All rights reserved.
+              </p>
+            </td>
+          </tr>
+          
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `
+}
+
+function getCounterSignRequestEmailTemplate({
+  adminName,
+  userName,
+  userEmail,
+  sopTitle,
+  sopVersion,
+  testScore,
+  userSignature,
+  signedAt,
+}: Omit<SendCounterSignRequestEmailParams, 'to'>) {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Counter-Signature Required</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 0;">
+        <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+          
+          <!-- Header with Blue Background -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); padding: 40px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">
+                ✍️ Counter-Signature Required
+              </h1>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px;">
+              <p style="margin: 0 0 20px; font-size: 16px; color: #374151; line-height: 1.6;">
+                Hi <strong>${adminName}</strong>,
+              </p>
+              
+              <p style="margin: 0 0 20px; font-size: 16px; color: #374151; line-height: 1.6;">
+                A staff member has completed an SOP and is awaiting your counter-signature to finalize their training certification.
+              </p>
+              
+              <!-- Staff Details Box -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #eff6ff; border: 2px solid #93c5fd; border-radius: 12px; margin: 30px 0;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <h2 style="margin: 0 0 16px; font-size: 20px; color: #1e40af; font-weight: bold;">
+                      Staff Member: ${userName}
+                    </h2>
+                    <table role="presentation" style="width: 100%; border-collapse: collapse; margin-top: 16px;">
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #1e40af; font-weight: 600;">
+                          Email:
+                        </td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #1e3a8a; font-weight: 500;">
+                          ${userEmail}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #1e40af; font-weight: 600;">
+                          SOP Completed:
+                        </td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #1e3a8a; font-weight: 500;">
+                          ${sopTitle}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #1e40af; font-weight: 600;">
+                          Version:
+                        </td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #1e3a8a; font-weight: 500;">
+                          v${sopVersion}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #1e40af; font-weight: 600;">
+                          Test Score:
+                        </td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #059669; font-weight: bold;">
+                          ${testScore}% - PASSED ✓
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- User Signature Box -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f0fdf4; border: 2px solid #86efac; border-radius: 12px; margin: 30px 0;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <h3 style="margin: 0 0 12px; font-size: 16px; color: #065f46; font-weight: bold;">
+                      Staff Member's Signature
+                    </h3>
+                    <p style="margin: 0 0 16px; font-size: 32px; font-family: 'Brush Script MT', cursive; font-style: italic; color: #1f2937;">
+                      ${userSignature}
+                    </p>
+                    <p style="margin: 0; font-size: 12px; color: #059669;">
+                      Signed on ${signedAt.toLocaleString('en-US', { 
+                        dateStyle: 'full', 
+                        timeStyle: 'short' 
+                      })}
+                    </p>
+                    <p style="margin: 12px 0 0; font-size: 12px; color: #047857; font-style: italic;">
+                      Declaration: "I confirm that I have thoroughly read the documentation and answered all questions honestly and to the best of my ability"
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- Action Required Box -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #fef2f2; border: 2px solid #fca5a5; border-radius: 12px; margin: 30px 0;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <h3 style="margin: 0 0 12px; font-size: 16px; color: #991b1b; font-weight: bold;">
+                      📋 Action Required - Counter-Signature Needed
+                    </h3>
+                    <ol style="margin: 0; padding-left: 20px; font-size: 14px; color: #7f1d1d; line-height: 1.8;">
+                      <li>Login to the SOP Management System</li>
+                      <li>Navigate to "Counter-Sign" or "Staff Management"</li>
+                      <li>Review ${userName}'s completion details</li>
+                      <li>Provide your counter-signature to verify completion</li>
+                    </ol>
+                  </td>
+                </tr>
+              </table>
+              
+              <p style="margin: 30px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+                <strong>Important:</strong> Your counter-signature verifies that the staff member has completed their training and you acknowledge their competency certification. This is required for compliance purposes.
+              </p>
+              
+              <p style="margin: 20px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+                Please login to the SOP Management System to review the details and provide your counter-signature.
+              </p>
+              
+              <p style="margin: 30px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+                If you have any questions or concerns about this completion, please contact the staff member directly.
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f9fafb; padding: 24px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+                © ${new Date().getFullYear()} SOP Management System. All rights reserved.
+              </p>
+            </td>
+          </tr>
+          
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `
+}
+
+interface AssignmentNotificationParams {
+  to: string
+  userName: string
+  sops: Array<{
+    title: string
+    description: string
+    category?: string
+    version: string
+    dueDate?: Date
+  }>
+}
+
+export async function sendAssignmentNotificationEmail({
+  to,
+  userName,
+  sops,
+}: AssignmentNotificationParams) {
+  try {
+    const count = sops.length
+    const data = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'SOP Management <onboarding@resend.dev>',
+      to: [to],
+      subject: \`New Training Assigned: \${count} SOP\${count > 1 ? 's' : ''} Require\${count === 1 ? 's' : ''} Your Attention\`,
+      html: getAssignmentNotificationEmailTemplate({ userName, sops }),
+    })
+
+    return { success: true, data }
+  } catch (error) {
+    console.error('Failed to send assignment notification email:', error)
+    return { success: false, error }
+  }
+}
+
+function getAssignmentNotificationEmailTemplate({
+  userName,
+  sops,
+}: Omit<AssignmentNotificationParams, 'to'>) {
+  const count = sops.length
+  
+  return \`
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Training Assignment</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 0;">
+        <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+          
+          <tr>
+            <td style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); padding: 40px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">
+                📚 New Training Assigned
+              </h1>
+            </td>
+          </tr>
+          
+          <tr>
+            <td style="padding: 40px;">
+              <p style="margin: 0 0 20px; font-size: 16px; color: #374151; line-height: 1.6;">
+                Hi <strong>\${userName}</strong>,
+              </p>
+              
+              <p style="margin: 0 0 20px; font-size: 16px; color: #374151; line-height: 1.6;">
+                You have been assigned <strong>\${count} new Standard Operating Procedure\${count > 1 ? 's' : ''}</strong> to complete. Please review and complete the competency tests at your earliest convenience.
+              </p>
+              
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f0fdf4; border: 2px solid #86efac; border-radius: 12px; margin: 30px 0; padding: 0;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <h2 style="margin: 0 0 20px; font-size: 18px; color: #065f46; font-weight: bold;">
+                      SOPs Assigned:
+                    </h2>
+                    
+                    \${sops.map((sop, index) => \`
+                      <div style="background-color: #ffffff; border: 1px solid #d1fae5; border-radius: 8px; padding: 20px; margin-bottom: \${index < sops.length - 1 ? '16px' : '0'};">
+                        <h3 style="margin: 0 0 12px; font-size: 16px; color: #047857; font-weight: bold;">
+                          \${index + 1}. \${sop.title}
+                        </h3>
+                        <p style="margin: 0 0 12px; font-size: 14px; color: #065f46; line-height: 1.5;">
+                          \${sop.description}
+                        </p>
+                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                          \${sop.category ? \`
+                          <tr>
+                            <td style="padding: 4px 0; font-size: 13px; color: #059669; font-weight: 600; width: 100px;">
+                              Category:
+                            </td>
+                            <td style="padding: 4px 0; font-size: 13px; color: #047857;">
+                              \${sop.category}
+                            </td>
+                          </tr>
+                          \` : ''}
+                          <tr>
+                            <td style="padding: 4px 0; font-size: 13px; color: #059669; font-weight: 600; width: 100px;">
+                              Version:
+                            </td>
+                            <td style="padding: 4px 0; font-size: 13px; color: #047857;">
+                              v\${sop.version}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 4px 0; font-size: 13px; color: #059669; font-weight: 600; width: 100px;">
+                              Due Date:
+                            </td>
+                            <td style="padding: 4px 0; font-size: 13px; color: #047857;">
+                              \${sop.dueDate ? new Date(sop.dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'No deadline'}
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
+                    \`).join('')}
+                  </td>
+                </tr>
+              </table>
+              
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #fef2f2; border: 2px solid #fca5a5; border-radius: 12px; margin: 30px 0;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <h3 style="margin: 0 0 12px; font-size: 16px; color: #991b1b; font-weight: bold;">
+                      📋 Action Required
+                    </h3>
+                    <p style="margin: 0 0 12px; font-size: 14px; color: #7f1d1d; line-height: 1.8;">
+                      To complete your training assignments:
+                    </p>
+                    <ol style="margin: 0; padding-left: 20px; font-size: 14px; color: #7f1d1d; line-height: 1.8;">
+                      <li>Login to the SOP Management System</li>
+                      <li>Navigate to your "Pending SOPs" section</li>
+                      <li>Review each SOP thoroughly</li>
+                      <li>Complete the competency test (100% required to pass)</li>
+                      <li>Provide your electronic signature</li>
+                    </ol>
+                  </td>
+                </tr>
+              </table>
+              
+              <p style="margin: 30px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+                <strong>Important:</strong> All assigned SOPs must be completed\${sops.some(s => s.dueDate) ? ' by their due dates' : ''}. You must achieve 100% on each competency test and provide your electronic signature to complete your training.
+              </p>
+              
+              <p style="margin: 20px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+                Please login to the SOP Management System to begin your training.
+              </p>
+              
+              <p style="margin: 30px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+                If you have any questions about these assignments, please contact your administrator.
+              </p>
+            </td>
+          </tr>
+          
+          <tr>
+            <td style="background-color: #f9fafb; padding: 24px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+                © \${new Date().getFullYear()} SOP Management System. All rights reserved.
+              </p>
+            </td>
+          </tr>
+          
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  \`
+}

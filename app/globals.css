@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+  }
+}
+
+@layer components {
+  /* Modern Button Styles */
+  .btn-primary {
+    @apply bg-[#FF1E25] text-white px-8 py-3.5 rounded-full hover:bg-[#E01B22] transition-all duration-300 font-semibold text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-gray-900 px-8 py-3.5 rounded-full hover:bg-gray-50 transition-all duration-300 font-semibold text-base border-2 border-gray-200 hover:border-gray-300;
+  }
+
+  .btn-danger {
+    @apply bg-[#FF1E25] text-white px-8 py-3.5 rounded-full hover:bg-[#E01B22] transition-all duration-300 font-semibold text-base shadow-lg;
+  }
+
+  .btn-small {
+    @apply bg-[#FF1E25] text-white px-6 py-2.5 rounded-full hover:bg-[#E01B22] transition-all duration-300 font-medium text-sm shadow-md hover:shadow-lg;
+  }
+
+  /* Input Fields */
+  .input-field {
+    @apply w-full px-5 py-3.5 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#FF1E25] focus:border-transparent outline-none transition-all duration-200 bg-white;
+  }
+
+  /* Modern Card Styles */
+  .card {
+    @apply bg-white rounded-3xl shadow-sm border border-gray-100 p-8 hover:shadow-lg transition-all duration-300;
+  }
+
+  .card-elevated {
+    @apply bg-white rounded-3xl shadow-xl border border-gray-100 p-8 hover:shadow-2xl transition-all duration-300;
+  }
+
+  /* Status Badges */
+  .badge-pending {
+    @apply inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-amber-50 text-amber-700 border border-amber-200;
+  }
+
+  .badge-in-progress {
+    @apply inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200;
+  }
+
+  .badge-completed {
+    @apply inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200;
+  }
+
+  .badge-passed {
+    @apply inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200;
+  }
+
+  .badge-failed {
+    @apply inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-rose-50 text-rose-700 border border-rose-200;
+  }
+
+  .badge-admin {
+    @apply inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-[#FF1E25] text-white;
+  }
+
+  .badge-user {
+    @apply inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-100 text-gray-700;
+  }
+
+  .badge-awaiting-user-signature {
+    @apply inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-amber-50 text-amber-700 border border-amber-200;
+  }
+
+  .badge-awaiting-admin-signature {
+    @apply inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-purple-50 text-purple-700 border border-purple-200;
+  }
+
+  /* Hero Section */
+  .hero-gradient {
+    background: linear-gradient(135deg, #FF1E25 0%, #E01B22 100%);
+  }
+
+  /* Stat Cards */
+  .stat-card {
+    @apply bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300;
+  }
+
+  /* Tables */
+  .table-modern {
+    @apply min-w-full divide-y divide-gray-100;
+  }
+
+  .table-header {
+    @apply px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider bg-gray-50;
+  }
+
+  .table-cell {
+    @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+  }
+
+  /* Loading Spinner */
+  .spinner {
+    @apply animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-[#FF1E25];
+  }
+
+  /* Modal Overlay */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50;
+  }
+
+  .modal-content {
+    @apply bg-white rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl;
+  }
+
+  /* Progress Bar */
+  .progress-bar {
+    @apply h-2 bg-gray-100 rounded-full overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-[#FF1E25] rounded-full transition-all duration-500;
+  }
+
+  /* Links */
+  .link-primary {
+    @apply text-[#FF1E25] hover:text-[#E01B22] font-semibold transition-colors duration-200;
+  }
+
+  /* Section Headers */
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold text-gray-900 mb-3;
+  }
+
+  .section-subtitle {
+    @apply text-lg text-gray-600 mb-8;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FF1E25;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #E01B22;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Version Badges */
+.badge-version {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700;
+}
+
+.badge-outdated {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-300;
+}
+
+.badge-current {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-300;
+}
+
+.badge-version-completed {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700;
+}
+
+.badge-awaiting-signature {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-300;
+}
+
+.badge-fully-signed {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-300;
+}
+
+/* Signature Display */
+.signature-display {
+  font-family: 'Brush Script MT', 'Apple Chancery', cursive;
+  font-size: 2.5rem;
+  font-style: italic;
+  color: #1f2937;
+  line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+  .signature-display {
+    font-size: 2rem;
+  }
+}
