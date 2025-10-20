@@ -88,7 +88,7 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10 text-red-100 text-sm">
-          © 2024 SOP Management System. All rights reserved.
+          © 2025 SOP Management System. All rights reserved.
         </div>
       </div>
 
