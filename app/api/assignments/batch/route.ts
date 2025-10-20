@@ -136,9 +136,9 @@ export async function POST(request: Request) {
           return {
             title: sop.title,
             description: sop.description,
-            category: sop.category,
+            category: sop.category ?? undefined,
             version: sop.version,
-            dueDate: assignment?.dueDate,
+            dueDate: assignment?.dueDate ?? undefined,
           }
         })
 

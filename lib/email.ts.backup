@@ -532,7 +532,7 @@ function getAssignmentNotificationEmailTemplate({
 }: Omit<AssignmentNotificationParams, 'to'>) {
   const count = sops.length
   
-  return `
+  return \`
 <!DOCTYPE html>
 <html>
 <head>
@@ -557,11 +557,11 @@ function getAssignmentNotificationEmailTemplate({
           <tr>
             <td style="padding: 40px;">
               <p style="margin: 0 0 20px; font-size: 16px; color: #374151; line-height: 1.6;">
-                Hi <strong>${userName}</strong>,
+                Hi <strong>\${userName}</strong>,
               </p>
               
               <p style="margin: 0 0 20px; font-size: 16px; color: #374151; line-height: 1.6;">
-                You have been assigned <strong>${count} new Standard Operating Procedure${count > 1 ? 's' : ''}</strong> to complete. Please review and complete the competency tests at your earliest convenience.
+                You have been assigned <strong>\${count} new Standard Operating Procedure\${count > 1 ? 's' : ''}</strong> to complete. Please review and complete the competency tests at your earliest convenience.
               </p>
               
               <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f0fdf4; border: 2px solid #86efac; border-radius: 12px; margin: 30px 0; padding: 0;">
@@ -571,31 +571,31 @@ function getAssignmentNotificationEmailTemplate({
                       SOPs Assigned:
                     </h2>
                     
-                    ${sops.map((sop, index) => `
-                      <div style="background-color: #ffffff; border: 1px solid #d1fae5; border-radius: 8px; padding: 20px; margin-bottom: ${index < sops.length - 1 ? '16px' : '0'};">
+                    \${sops.map((sop, index) => \`
+                      <div style="background-color: #ffffff; border: 1px solid #d1fae5; border-radius: 8px; padding: 20px; margin-bottom: \${index < sops.length - 1 ? '16px' : '0'};">
                         <h3 style="margin: 0 0 12px; font-size: 16px; color: #047857; font-weight: bold;">
-                          ${index + 1}. ${sop.title}
+                          \${index + 1}. \${sop.title}
                         </h3>
                         <p style="margin: 0 0 12px; font-size: 14px; color: #065f46; line-height: 1.5;">
-                          ${sop.description}
+                          \${sop.description}
                         </p>
                         <table role="presentation" style="width: 100%; border-collapse: collapse;">
-                          ${sop.category ? `
+                          \${sop.category ? \`
                           <tr>
                             <td style="padding: 4px 0; font-size: 13px; color: #059669; font-weight: 600; width: 100px;">
                               Category:
                             </td>
                             <td style="padding: 4px 0; font-size: 13px; color: #047857;">
-                              ${sop.category}
+                              \${sop.category}
                             </td>
                           </tr>
-                          ` : ''}
+                          \` : ''}
                           <tr>
                             <td style="padding: 4px 0; font-size: 13px; color: #059669; font-weight: 600; width: 100px;">
                               Version:
                             </td>
                             <td style="padding: 4px 0; font-size: 13px; color: #047857;">
-                              v${sop.version}
+                              v\${sop.version}
                             </td>
                           </tr>
                           <tr>
@@ -603,12 +603,12 @@ function getAssignmentNotificationEmailTemplate({
                               Due Date:
                             </td>
                             <td style="padding: 4px 0; font-size: 13px; color: #047857;">
-                              ${sop.dueDate ? new Date(sop.dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'No deadline'}
+                              \${sop.dueDate ? new Date(sop.dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'No deadline'}
                             </td>
                           </tr>
                         </table>
                       </div>
-                    `).join('')}
+                    \`).join('')}
                   </td>
                 </tr>
               </table>
@@ -634,7 +634,7 @@ function getAssignmentNotificationEmailTemplate({
               </table>
               
               <p style="margin: 30px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
-                <strong>Important:</strong> All assigned SOPs must be completed${sops.some(s => s.dueDate) ? ' by their due dates' : ''}. You must achieve 100% on each competency test and provide your electronic signature to complete your training.
+                <strong>Important:</strong> All assigned SOPs must be completed\${sops.some(s => s.dueDate) ? ' by their due dates' : ''}. You must achieve 100% on each competency test and provide your electronic signature to complete your training.
               </p>
               
               <p style="margin: 20px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
@@ -650,7 +650,7 @@ function getAssignmentNotificationEmailTemplate({
           <tr>
             <td style="background-color: #f9fafb; padding: 24px; text-align: center; border-top: 1px solid #e5e7eb;">
               <p style="margin: 0; font-size: 12px; color: #9ca3af;">
-                © ${new Date().getFullYear()} SOP Management System. All rights reserved.
+                © \${new Date().getFullYear()} SOP Management System. All rights reserved.
               </p>
             </td>
           </tr>
@@ -661,5 +661,5 @@ function getAssignmentNotificationEmailTemplate({
   </table>
 </body>
 </html>
-  `
+  \`
 }

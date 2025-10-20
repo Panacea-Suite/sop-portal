@@ -69,7 +69,7 @@ export async function GET(
         )
 
         // Replace test questions with randomized subset
-        sop.test.questions = randomizedQuestions
+        sop.test.questions = randomizedQuestions as any
       }
     }
 
