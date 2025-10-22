@@ -1,0 +1,24 @@
+name: Deploy SOP-Portal to Dev Environment
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup SSH Key
+        run: |
+          echo "${{ secrets.DEV_SERVER_SSH_KEY }}" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          ssh-keyscan -H ${{ secrets.DEV_SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key \
+            ubuntu@${{ secrets.DEV_SERVER_HOST }} "
+            /snap/bin/aws s3 cp s3://sop-portal-resource-files/dev/sop-portal/deploy-sop-portal-dev.sh /tmp/deploy-sop-portal-dev.sh && 
+            chmod +x /tmp/deploy-sop-portal-dev.sh && 
+            /tmp/deploy-sop-portal-dev.sh"
