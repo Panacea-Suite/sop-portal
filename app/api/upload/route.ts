@@ -1,9 +1,16 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+
+// Initialize S3 client
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION || 'eu-west-2',
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+  },
+})
 
 // POST upload PDF file (admin only)
 export async function POST(request: Request) {
@@ -40,18 +47,20 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Ensure upload directory exists
-    const uploadDir = join(process.cwd(), 'public', 'uploads')
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true })
-    }
+    // Upload to S3
+    const bucketName = process.env.AWS_S3_BUCKET_NAME || 'sop-portal-assets-dev'
+    const command = new PutObjectCommand({
+      Bucket: bucketName,
+      Key: filename,
+      Body: buffer,
+      ContentType: file.type,
+    })
 
-    // Save to public/uploads directory
-    const filePath = join(uploadDir, filename)
-    await writeFile(filePath, buffer)
+    await s3Client.send(command)
 
-    // Return the URL path
-    const fileUrl = `/uploads/${filename}`
+    // Generate S3 URL
+    const region = process.env.AWS_REGION || 'eu-west-2'
+    const fileUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${filename}`
 
     return NextResponse.json({
       url: fileUrl,

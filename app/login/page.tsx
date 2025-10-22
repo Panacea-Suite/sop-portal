@@ -88,7 +88,7 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10 text-red-100 text-sm">
-          © 2024 SOP Management System. All rights reserved.
+          © 2025 SOP Management System. All rights reserved.
         </div>
       </div>
 
@@ -173,20 +173,6 @@ export default function LoginPage() {
                 )}
               </button>
             </form>
-
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <p className="text-center text-sm text-gray-600 mb-4 font-medium">Demo Accounts:</p>
-              <div className="space-y-2 text-sm">
-                <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
-                  <p className="font-semibold text-gray-900 mb-1">Admin Access</p>
-                  <p className="text-gray-600">admin@example.com / admin123</p>
-                </div>
-                <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
-                  <p className="font-semibold text-gray-900 mb-1">User Access</p>
-                  <p className="text-gray-600">user@example.com / user123</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
