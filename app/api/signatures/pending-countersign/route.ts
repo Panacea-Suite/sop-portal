@@ -3,6 +3,9 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
+// Tell Next.js this route must always be dynamic (fixes build error)
+export const dynamic = 'force-dynamic'
+
 // GET all signatures awaiting admin counter-signature
 export async function GET(request: Request) {
   try {
@@ -46,7 +49,7 @@ export async function GET(request: Request) {
         updatedAt: 'desc'
       }
     })
-
+    
     // Get test results for each
     const pendingWithResults = await Promise.all(
       pendingAssignments.map(async (assignment) => {
@@ -61,18 +64,15 @@ export async function GET(request: Request) {
             completedAt: 'desc'
           }
         })
-
         return {
           ...assignment,
           testResult
         }
       })
     )
-
     return NextResponse.json(pendingWithResults)
   } catch (error) {
     console.error('Failed to fetch pending counter-signatures:', error)
     return NextResponse.json({ error: 'Failed to fetch pending counter-signatures' }, { status: 500 })
   }
 }
-
