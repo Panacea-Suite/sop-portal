@@ -1,0 +1,25 @@
+name: Deploy SOP-Portal to Staging Environment
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.STAGING_SERVER_SSH_KEY }}" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          ssh-keyscan -H ${{ secrets.STAGING_SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key \
+            ubuntu@${{ secrets.STAGING_SERVER_HOST }} "
+            /snap/bin/aws s3 cp s3://sop-portal-resource-files/staging/sop-portal/deploy-sop-portal-staging.sh /tmp/deploy-sop-portal-staging.sh && 
+            chmod +x /tmp/deploy-sop-portal-staging.sh && 
+            /tmp/deploy-sop-portal-staging.sh"
