@@ -29,3 +29,5 @@ arn:aws:s3:::sop-portal-resource-files
 
 and get the secrets from this arn:
 arn:aws:secretsmanager:eu-west-2:677276088716:secret:dev/sop-portal/env-DvRySp
+
+cicd trigger
