@@ -1,4 +1,4 @@
-name: Deploy SOP-Portal to Dev Environment
+name: Deploy SOP-Portal to Staging Environment
 
 on:
   push:
