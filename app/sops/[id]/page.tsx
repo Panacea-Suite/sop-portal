@@ -307,7 +307,7 @@ export default function SopViewPage() {
 
               {/* Content Display */}
               {activeTab === 'pdf' && sop.pdfUrl ? (
-                <PdfViewer pdfUrl={sop.pdfUrl} title={sop.pdfFileName || 'SOP Document'} />
+                <PdfViewer sopId={sop.id} title={sop.pdfFileName || 'SOP Document'} />
               ) : (
                 <div className="card mb-8">
                   <div className="prose max-w-none">
